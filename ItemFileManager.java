@@ -1,7 +1,15 @@
 import java.io.*;
 import java.util.ArrayList;
 
+/**
+ * This class is responsible for loading and saving item data
+ */
 public class ItemFileManager {
+    /**
+     * This method is responsible for loading item data to an array
+     * @param fileName name of the file to be opened
+     * @return array of items
+     */
     public static ArrayList<Item> loadItems(String fileName) {
         ArrayList<Item> items = new ArrayList<Item>();
 
@@ -14,6 +22,12 @@ public class ItemFileManager {
 
         return  items;
     }
+
+    /**
+     * This method is responsible for saving item data to the file
+     * @param fileName name of the file to be opened
+     * @param items array of items to be saved in file
+     */
     public static void saveItems(String fileName, ArrayList<Item>items){
 
         try{

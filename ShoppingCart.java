@@ -4,30 +4,55 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * This class is responsible for holding current shopping cart and manipulating it
+ */
 public class ShoppingCart implements Serializable {
 
     Map<Item, Integer> cart;
 
+    /**
+     * Default constructor to initialize cart with LinkedHashMap
+     */
     public ShoppingCart(){
         cart = new LinkedHashMap<>();
     }
 
+    /**
+     * This method adds object of item and its quantity to the cart
+     * @param item  object of class Item
+     * @param quantity quantity needed to be purchased
+     */
     public void addItem(Item item, int quantity){
         cart.put(item, quantity);
     }
 
+    /**
+     * This method removes object of item from the cart
+     * @param item object of class Item
+     */
     public void  removeItem(Item item){
         cart.remove(item);
     }
 
+    /**
+     * This method clears the cart
+     */
     public void clearCart(){
         cart.clear();
     }
 
+    /**
+     *
+     * @return cart
+     */
     public Map<Item, Integer> getItemsInCart(){
         return  cart;
     }
 
+    /**
+     * This method is responsible for displaying current cart
+     */
     public void displayCart(){
         if(cart.isEmpty()){
             System.out.println("No Items In Cart");
@@ -69,6 +94,10 @@ public class ShoppingCart implements Serializable {
         System.out.println();
     }
 
+    /**
+     *
+     * @return cart size
+     */
     public int cartSize(){
         return cart.size();
     }
