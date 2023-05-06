@@ -1,6 +1,8 @@
 import java.util.*;
 
-
+/**
+ * This class used to start application and manage it
+ */
 public class ToffeManager {
     private Customer currentCustomer;
     private ArrayList<Customer>customers;
@@ -9,12 +11,21 @@ public class ToffeManager {
     private final String ITEMS_FILE_NAME = "items";
     private final String CUSTOMERS_FILE_NAME = "customers";
 
+    /**
+     * initialize class by load customers and items from the file
+     */
     public  ToffeManager(){
         currentCustomer = null;
         customers = loadCustomers();
         items = loadItems();
     }
 
+
+    /**
+     * This use CustomerFileManager to load customers and initialize shoppingCart of each customer
+     * if it null
+     * @return list of customers loaded form file
+     */
     private ArrayList<Customer> loadCustomers(){
         ArrayList<Customer> customersData = CustomerFileManager.loadCustomers(CUSTOMERS_FILE_NAME);
         for(int i=0; i<customersData.size(); i++){
@@ -25,11 +36,17 @@ public class ToffeManager {
         return customersData;
     }
 
+    /**
+     * use ItemFileManager and load items from file
+     * @return list of items in file
+     */
     private ArrayList<Item> loadItems(){
         return ItemFileManager.loadItems(ITEMS_FILE_NAME);
     }
 
-
+    /**
+     * used for signup new Customer
+     */
     public void signUp(){
         Scanner scanner = new Scanner(System.in);
         Boolean isDuplicate;
@@ -74,6 +91,9 @@ public class ToffeManager {
          CustomerFileManager.saveCustomers(CUSTOMERS_FILE_NAME, customers);
     }
 
+    /**
+     * Used for login to customer
+     */
     public  void login(){
         Scanner scanner = new Scanner(System.in);
         String username;
@@ -111,18 +131,28 @@ public class ToffeManager {
 
     }
 
+    /**
+     * print customers
+     */
     void printCustomers(){
         for(int i=0; i<customers.size(); i++){
             System.out.println(customers.get(i).getUsername());
             System.out.println(customers.get(i).getPassword());
         }
     }
+
+    /**
+     * print Items
+     */
     void printItems(){
         for(int i=0; i<items.size(); i++){
             System.out.println(items.get(i).getName());
         }
     }
 
+    /**
+     * Start application and it contains menus to print to user
+     */
     void run(){
         boolean isRunning = true;
         // No Login User
@@ -203,6 +233,9 @@ public class ToffeManager {
 
     }
 
+    /**
+     * Display items in catalog
+     */
     public void displayItems(){
         if(items.size() == 0){
             System.out.println("No Items");
@@ -242,6 +275,9 @@ public class ToffeManager {
 
     }
 
+    /**
+     * add item from customer to his shopping cart
+     */
     public void addToCart(){
         displayItems();
         System.out.println("Please Enter Item Number: ");
@@ -267,6 +303,9 @@ public class ToffeManager {
 
     }
 
+    /**
+     * ask customer to remove item form his shopping cart
+     */
     public void removeFromCart(){
         currentCustomer.getShoppingCart().displayCart();
         System.out.println("Please Enter Item Number You want to remove");
@@ -286,6 +325,9 @@ public class ToffeManager {
 
     }
 
+    /**
+     * checkout user
+     */
     public void checkOut(){
         double totalPrice = 0.0;
         LinkedHashMap<Item, Integer> itemsInCart = (LinkedHashMap<Item, Integer>) currentCustomer.getShoppingCart().getItemsInCart();

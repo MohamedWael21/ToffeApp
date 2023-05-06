@@ -1,8 +1,17 @@
 import java.io.*;
 import java.util.ArrayList;
 
+/**
+ * This class is used to get Customers and save Customers in file
+ */
 public class CustomerFileManager {
 
+    /**
+     *
+     * @param fileName
+     * @return list of customers that loaded from file
+     * load customers from file
+     */
     public static ArrayList<Customer> loadCustomers(String fileName) {
         ArrayList<Customer> customers = new ArrayList<Customer>();
 
@@ -15,6 +24,13 @@ public class CustomerFileManager {
 
         return  customers;
     }
+
+    /**
+     *
+     * @param fileName
+     * @param customers
+     * save customers into file
+     */
     public static void saveCustomers(String fileName, ArrayList<Customer>customers){
 
         try{
