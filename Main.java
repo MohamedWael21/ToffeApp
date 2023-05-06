@@ -12,7 +12,8 @@ public class Main {
 //        ItemFileManager.saveItems("items", items);
 
         ToffeManager manager = new ToffeManager();
-        manager.signUp();
+        manager.run();
+        System.out.println("GoodBye^^");
 
 
     }

@@ -8,10 +8,14 @@ public class Customer implements Serializable {
 
     private Address address;
 
+
+    private ShoppingCart shoppingCart;
+
     public Customer(String username, String password, Address address) {
         this.username = username;
         this.password = password;
         this.address = address;
+        shoppingCart = new ShoppingCart();
     }
 
     public String getUsername() {
@@ -38,5 +42,8 @@ public class Customer implements Serializable {
         this.address = address;
     }
 
+    public ShoppingCart getShoppingCart(){ return shoppingCart; }
+
+    public void setShoppingCart(ShoppingCart cart){ this.shoppingCart = cart; }
 
 }
