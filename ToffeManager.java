@@ -359,7 +359,7 @@ public class ToffeManager {
                    throw new RuntimeException(e);
                }
                System.out.println("Order is Delivered successfully");
-               System.out.println("Order has been Closed");
+               System.out.println("Order has been Closed\n\n");
                CustomerFileManager.saveCustomers(CUSTOMERS_FILE_NAME, customers);
         }
 
