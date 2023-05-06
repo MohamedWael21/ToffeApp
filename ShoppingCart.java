@@ -1,6 +1,7 @@
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class ShoppingCart implements Serializable {
@@ -8,7 +9,7 @@ public class ShoppingCart implements Serializable {
     Map<Item, Integer> cart;
 
     public ShoppingCart(){
-        cart = new HashMap<>();
+        cart = new LinkedHashMap<>();
     }
 
     public void addItem(Item item, int quantity){
@@ -66,7 +67,10 @@ public class ShoppingCart implements Serializable {
             System.out.println();
         }
         System.out.println();
+    }
 
+    public int cartSize(){
+        return cart.size();
     }
 
 }

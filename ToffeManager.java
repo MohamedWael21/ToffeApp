@@ -1,5 +1,4 @@
-import java.util.ArrayList;
-import java.util.Scanner;
+import java.util.*;
 
 
 public class ToffeManager {
@@ -185,8 +184,10 @@ public class ToffeManager {
                     addToCart();
                     break;
                 case 4:
+                    removeFromCart();
                     break;
                 case 5:
+                    checkOut();
                     break;
                 case 6:
                     currentCustomer = null;
@@ -197,6 +198,7 @@ public class ToffeManager {
                     System.out.println("Invalid Option");
             }
         }
+
 
 
     }
@@ -260,10 +262,67 @@ public class ToffeManager {
         }
 
         currentCustomer.getShoppingCart().addItem(items.get(itemNumber-1), qunatity);
+        CustomerFileManager.saveCustomers(CUSTOMERS_FILE_NAME, customers);
         System.out.println("Added To Cart");
 
     }
 
+    public void removeFromCart(){
+        currentCustomer.getShoppingCart().displayCart();
+        System.out.println("Please Enter Item Number You want to remove");
+        Scanner scanner = new Scanner(System.in);
+        int itemNumber = scanner.nextInt();
+        if(itemNumber > currentCustomer.getShoppingCart().cartSize() || itemNumber <= 0){
+            System.out.println("Invalid Item Number");
+            return;
+        }
+        LinkedHashMap<Item, Integer> itemsInCart = (LinkedHashMap<Item, Integer>) currentCustomer.getShoppingCart().getItemsInCart();
+        List<Map.Entry<Item, Integer>> entries = new ArrayList<>(itemsInCart.entrySet());
+        currentCustomer.getShoppingCart().removeItem(entries.get(itemNumber-1).getKey());
 
+        CustomerFileManager.saveCustomers(CUSTOMERS_FILE_NAME, customers);
+
+        System.out.println("item "+entries.get(itemNumber-1).getKey().getName()+" Removed Successfully");
+
+    }
+
+    public void checkOut(){
+        double totalPrice = 0.0;
+        LinkedHashMap<Item, Integer> itemsInCart = (LinkedHashMap<Item, Integer>) currentCustomer.getShoppingCart().getItemsInCart();
+        List<Map.Entry<Item, Integer>>  itemsToBeCheckedOut= new ArrayList<>(itemsInCart.entrySet());
+
+        for (int i=0; i<itemsToBeCheckedOut.size(); i++){
+            totalPrice += itemsToBeCheckedOut.get(i).getKey().getPrice()*itemsToBeCheckedOut.get(i).getValue();
+        }
+
+        currentCustomer.getShoppingCart().displayCart();
+        System.out.println("Total Price: "+ totalPrice);
+        System.out.println("Do you Want to Proceed?(y/n) ");
+
+        char option = new Scanner(System.in).next().toLowerCase().charAt(0);
+
+        if(option == 'y'){
+               System.out.println("The order will be shipping to This Address: ");
+               Address address = currentCustomer.getAddress();
+               System.out.println("City: " + address.getCity());
+               System.out.println("Governorate: " + address.getGovernorate());
+               System.out.println("Street: " + address.getStreet());
+               System.out.println("Floor: " + address.getFloor());
+
+               System.out.println("Order has been made successfully");
+               currentCustomer.getShoppingCart().clearCart();
+               try{
+                   Thread.sleep(5000);
+               }catch (InterruptedException e) {
+                   throw new RuntimeException(e);
+               }
+               System.out.println("Order is Delivered successfully");
+               System.out.println("Order has been Closed");
+               CustomerFileManager.saveCustomers(CUSTOMERS_FILE_NAME, customers);
+        }
+
+
+
+    }
 
 }
