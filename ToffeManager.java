@@ -1,5 +1,8 @@
 import java.util.*;
-
+import javax.mail.*;
+import javax.mail.internet.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 /**
  * This class used to start application and manage it
  */
@@ -49,21 +52,41 @@ public class ToffeManager {
      */
     public void signUp(){
         Scanner scanner = new Scanner(System.in);
-        Boolean isDuplicate;
+        Boolean isValid;
         String username;
         do {
-            isDuplicate = false;
+            isValid = false;
             System.out.println("Please Enter username: ");
             username = scanner.nextLine();
             for (int i = 0; i < customers.size(); i++) {
                 if (customers.get(i).getUsername().equals(username)) {
                     System.out.println("Username Duplicate");
-                    isDuplicate = true;
+                    isValid = true;
                     break;
                 }
             }
 
-        }while(isDuplicate);
+        }while(isValid);
+
+        String email;
+        do {
+            isValid = false;
+            System.out.println("Please Enter email: ");
+            email = scanner.nextLine();
+            if(!isValidEmail(email)){
+                System.out.println("Email is not valid\n");
+                isValid = true;
+                continue;
+            }
+            for (int i = 0; i < customers.size(); i++) {
+                if (customers.get(i).getEmail().equals(email)) {
+                    System.out.println("Email Duplicate");
+                    isValid = true;
+                    break;
+                }
+            }
+
+        }while(isValid);
 
          System.out.println("Please Enter Password: ");
          String password = scanner.nextLine();
@@ -73,6 +96,21 @@ public class ToffeManager {
          String street;
          String governorate;
          int floor;
+
+        String otp = sendOTP(email);
+        isValid = true;
+        do{
+            System.out.println("Please Enter OTP: ");
+            String userInput = scanner.nextLine();
+            if(otp.equals(userInput)) {
+                System.out.println("Email verified!!\n");
+                isValid = false;
+            }
+            else{
+                System.out.println("Invalid OTP\n");
+            }
+        }while(isValid);
+
 
          System.out.println("Please Enter City: ");
          city = scanner.nextLine();
@@ -86,7 +124,8 @@ public class ToffeManager {
          System.out.println("Please Enter Floor: ");
          floor = scanner.nextInt();
 
-         customers.add(new Customer(username, password, new Address(street, city, governorate, floor)));
+
+         customers.add(new Customer(email, username, password, new Address(street, city, governorate, floor)));
 
          CustomerFileManager.saveCustomers(CUSTOMERS_FILE_NAME, customers);
     }
@@ -358,6 +397,7 @@ public class ToffeManager {
                }catch (InterruptedException e) {
                    throw new RuntimeException(e);
                }
+               sendOrder(Double.toString(totalPrice));
                System.out.println("Order is Delivered successfully");
                System.out.println("Order has been Closed\n\n");
                CustomerFileManager.saveCustomers(CUSTOMERS_FILE_NAME, customers);
@@ -367,4 +407,78 @@ public class ToffeManager {
 
     }
 
+    public String sendOTP(String email){
+        String otp = generateOTP();
+        String from = "mazenbakry62@gmail.com";
+        String password = "eiqyfuapbncpsamm";
+        String host = "smtp.gmail.com";
+        Properties props = new Properties();
+        props.put("mail.smtp.host", host);
+        props.put("mail.smtp.port", 465);
+        props.put("mail.smtp.auth", true);
+        props.put("mail.smtp.ssl.enable", "true");
+
+        Session session = Session.getInstance(props, new javax.mail.Authenticator(){
+            protected PasswordAuthentication getPasswordAuthentication(){
+                return new PasswordAuthentication(from, password);
+            }
+        });
+        try{
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(from));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email));
+            message.setSubject("Your OTP for SignUp");
+            message.setText("Your OTP is " + otp);
+            Transport.send(message);
+            System.out.println("\t\t**** Email sent successfully! ****\n");
+        }
+        catch(MessagingException e){
+            throw new RuntimeException(e);
+        }
+        return otp;
+
+    }
+    public void sendOrder(String totalPrice){
+        String from = "mazenbakry62@gmail.com";
+        String password = "eiqyfuapbncpsamm";
+        String host = "smtp.gmail.com";
+        Properties props = new Properties();
+        props.put("mail.smtp.host", host);
+        props.put("mail.smtp.port", 465);
+        props.put("mail.smtp.auth", true);
+        props.put("mail.smtp.ssl.enable", "true");
+
+        Session session = Session.getInstance(props, new javax.mail.Authenticator(){
+            protected PasswordAuthentication getPasswordAuthentication(){
+                return new PasswordAuthentication(from, password);
+            }
+        });
+        try{
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(from));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(currentCustomer.getEmail()));
+            message.setSubject("Your Order");
+            message.setText("Order has been placed\n Total price: " + totalPrice +"\n Being delivered to: " + "\nCity: " + currentCustomer.getAddress().getCity() + "\nGovernorate: " + currentCustomer.getAddress().getGovernorate()+ "\nStreet: " + currentCustomer.getAddress().getStreet() + "\nFloor: " + currentCustomer.getAddress().getFloor());
+            Transport.send(message);
+            System.out.println("\t\t**** Email sent successfully! ****\n");
+        }
+        catch(MessagingException e){
+            throw new RuntimeException(e);
+        }
+    }
+    private static String generateOTP(){
+        int otpLength = 6;
+        String numbers = "0123456789";
+        Random random = new Random();
+        char [] otp = new char[otpLength];
+        for(int i=0 ; i<otpLength ; i++){
+            otp[i] = numbers.charAt(random.nextInt(numbers.length()));
+        }
+        return new String(otp);
+    }
+    public boolean isValidEmail(String email) {
+        Pattern pattern = Pattern.compile("^\\w[\\w.-]*@([\\w-]+\\.)+[a-zA-Z]{2,}$");
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
+    }
 }
